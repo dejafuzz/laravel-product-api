@@ -1,0 +1,17 @@
+#!/bin/sh
+
+echo "Waiting for PostgreSQL..."
+
+while ! nc -z db 5432; do
+    sleep 1
+done
+
+echo "PostgreSQL started"
+
+php artisan migrate --force
+
+php artisan db:seed --force || true
+
+php artisan optimize:clear
+
+php artisan serve --host=0.0.0.0 --port=8000
